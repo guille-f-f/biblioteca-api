@@ -58,6 +58,22 @@ public class Libro {
         this.alta = alta;
     }
 
+    public Editorial getEditorial() {
+        return editorial;
+    }
+
+    public void setEditorial(Editorial editorial) {
+        this.editorial = editorial;
+    }
+
+    public Autor getAutor() {
+        return autor;
+    }
+
+    public void setAutor(Autor autor) {
+        this.autor = autor;
+    }
+
     @Override
     public String toString() {
         return "Libro [isbm=" + isbm + ", titulo=" + titulo + ", ejemplares=" + ejemplares + ", alta=" + alta

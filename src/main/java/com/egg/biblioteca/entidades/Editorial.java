@@ -6,22 +6,24 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "editorial")
 public class Editorial {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+    private UUID id;
     private String nombre;
 
     public Editorial() {
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -38,3 +40,4 @@ public class Editorial {
         return "Editorial [id=" + id + ", nombre=" + nombre + "]";
     }
 }
+

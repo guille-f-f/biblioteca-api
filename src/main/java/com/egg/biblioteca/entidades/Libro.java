@@ -13,25 +13,28 @@ import jakarta.persistence.TemporalType;
 @Table(name = "libro")
 public class Libro {
     @Id
-    private Long isbm;
+    private Long isbn;
     private String titulo;
     private Integer ejemplares;
+
     @Temporal(TemporalType.DATE)
     private Date alta;
+
     @ManyToOne
     private Autor autor;
+
     @ManyToOne
     private Editorial editorial;
     
     public Libro() {
     }
 
-    public Long getIsbm() {
-        return isbm;
+    public Long getIsbn() {
+        return isbn;
     }
 
-    public void setIsbm(Long isbm) {
-        this.isbm = isbm;
+    public void setIsbn(Long isbn) {
+        this.isbn = isbn;
     }
 
     public String getTitulo() {
@@ -76,7 +79,7 @@ public class Libro {
 
     @Override
     public String toString() {
-        return "Libro [isbm=" + isbm + ", titulo=" + titulo + ", ejemplares=" + ejemplares + ", alta=" + alta
+        return "Libro [isbn=" + isbn + ", titulo=" + titulo + ", ejemplares=" + ejemplares + ", alta=" + alta
                 + ", autor=" + autor + ", editorial=" + editorial + "]";
     }
 }

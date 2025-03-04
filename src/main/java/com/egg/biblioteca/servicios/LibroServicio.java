@@ -31,18 +31,27 @@ public class LibroServicio {
     private EditorialRepositorio editorialRepositorio;
 
     @Transactional
-    public void crearLibro(Long isbn, Integer ejemplares, String titulo, UUID idAutor, String idEditorial) {
-        Optional<Autor> optionalAutor = autorRepositorio.findById(idAutor);
-        if (optionalAutor.isPresent()) {
-            Autor autor = optionalAutor.get();
-        }
-        Editorial editorial = editorialRepositorio.findById(idEditorial).get();
+    public void crearLibro(Long isbn, Integer ejemplares, String titulo, UUID idAutor, UUID idEditorial) throws MiExcepcion {
+
+        validar(isbn, ejemplares, titulo, idAutor, idEditorial);
+
         Libro libro = new Libro();
 
-        libro.setIsbm(isbn);
+        libro.setIsbn(isbn);
         libro.setEjemplares(ejemplares);
         libro.setTitulo(titulo);
         libro.setAlta(new Date());
+        Optional<Autor> optionalAutor = autorRepositorio.findById(idAutor);
+        if (optionalAutor.isPresent()) {
+            Autor autor = optionalAutor.get();
+            libro.setAutor(autor);
+        }
+
+        Optional<Editorial> optionalEditorial = editorialRepositorio.findById(idEditorial);
+        if (optionalEditorial.isPresent()) {
+            Editorial editorial = optionalEditorial.get();
+            libro.setEditorial(editorial);
+        }
 
         libroRepositorio.save(libro);
     }
@@ -53,27 +62,32 @@ public class LibroServicio {
     }
 
     @Transactional
-    public void modificarLibro(Long isbn, String titulo, Integer ejemplares, UUID idAutor, String idEditorial) {
-        validar(isbn, titulo, ejemplares, idAutor, idEditorial);
-        Optional<Libro> opcionalLibro = libroRepositorio.findById(isbn);
-        if (opcionalLibro.isPresent()) {
-            Libro libro = opcionalLibro.get();
+    public void modificarLibro(Long isbn, String titulo, Integer ejemplares, UUID idAutor, UUID idEditorial) throws MiExcepcion {
+
+        validar(isbn, ejemplares, titulo, idAutor, idEditorial);
+
+        Optional<Libro> optionalLibro = libroRepositorio.findById(isbn);
+
+        if (optionalLibro.isPresent()) {
+            Libro libro = optionalLibro.get();
             libro.setTitulo(titulo);
             libro.setEjemplares(ejemplares);
+
             // Buscar autor y asignarlo si está presente
-            autorRepositorio.findById(idAutor).ifPresentOrElse(libro::setAutor,
-                    () -> { throw new MiExcepcion("Autor inexistente."); });
+            libro.setAutor(autorRepositorio.findById(idAutor)
+                    .orElseThrow(() -> new MiExcepcion("Autor inexistente.")));
 
             // Buscar editorial y asignarla si está presente
-            editorialRepositorio.findById(idEditorial).ifPresentOrElse(libro::setEditorial,
-                    () -> { throw new MiExcepcion("Editorial inexistente."); });
+            libro.setEditorial(editorialRepositorio.findById(idEditorial)
+                    .orElseThrow(() -> new MiExcepcion("Editorial inexistente.")));
+
             libroRepositorio.save(libro);
         } else {
             throw new EntityNotFoundException("Libro con ISBN " + isbn + " no encontrado.");
         }
     }
 
-    private void validar(Long isbn, Integer ejemplares, String titulo, UUID idAutor, String idEditorial) throws MiExcepcion {
+    private void validar(Long isbn, Integer ejemplares, String titulo, UUID idAutor, UUID idEditorial) throws MiExcepcion {
         if (isbn == null || isbn < 0) {
             throw new MiExcepcion("El número de ISBN no puede ser nulo o negativo.");
         }
@@ -90,7 +104,7 @@ public class LibroServicio {
             throw new MiExcepcion("El id del autor no puede ser nulo.");
         }
 
-        if (idEditorial == null || idEditorial.isEmpty()) {
+        if (idEditorial == null) {
             throw new MiExcepcion("El id de la editorial no puede ser nulo o estár vacío.");
         }
     }

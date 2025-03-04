@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class EditorialServicio {
@@ -30,12 +31,12 @@ public class EditorialServicio {
     }
 
     @Transactional
-    public void modificarEditoriales(String idEdiorial, String nombreEditorial) throws MiExcepcion {
+    public void modificarEditoriales(UUID idEdiorial, String nombreEditorial) throws MiExcepcion {
         validar(nombreEditorial);
         Optional<Editorial> opcionalEditorial = editorialRepositorio.findById(idEdiorial);
         if (opcionalEditorial.isPresent()) {
             Editorial editorial = opcionalEditorial.get();
-            editorial.setNombre(nombre);
+            editorial.setNombre(nombreEditorial);
             editorialRepositorio.save(editorial);
         }
     }

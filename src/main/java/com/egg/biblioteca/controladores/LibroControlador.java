@@ -2,6 +2,7 @@ package com.egg.biblioteca.controladores;
 
 import com.egg.biblioteca.entidades.Autor;
 import com.egg.biblioteca.entidades.Editorial;
+import com.egg.biblioteca.entidades.Libro;
 import com.egg.biblioteca.excepciones.MiExcepcion;
 import com.egg.biblioteca.servicios.AutorServicio;
 import com.egg.biblioteca.servicios.EditorialServicio;
@@ -33,26 +34,32 @@ public class LibroControlador {
 
     @GetMapping("/registrar")
     public String registrar(ModelMap modelo) {
+
+        List<Libro> libros = libroServicio.listarLibros();
         List<Autor> autores = autorServicio.listarAutores();
         List<Editorial> editoriales = editorialServicio.listarEditoriales();
+
+        modelo.addAttribute("libros", libros);
         modelo.addAttribute("autores", autores);
         modelo.addAttribute("editoriales", editoriales);
         return "libro_form.html";
     }
 
     @PostMapping("/registro")
-    public String registro(@RequestParam(required = false) Long isbn, @RequestParam String titulo, @RequestParam(required = false) Integer ejemplares, @RequestParam(required = false) String idAutor, @RequestParam(required = false) String idEditorial, ModelMap modelo) {
+    public String registro(@RequestParam(required = false) Long isbn, @RequestParam String titulo, @RequestParam String imagen, @RequestParam(required = false) Integer ejemplares, @RequestParam(required = false) String idAutor, @RequestParam(required = false) String idEditorial, ModelMap modelo) {
         try {
             // Pars string a uuid
             UUID idAutorParseUUID = UUID.fromString(idAutor);
             UUID idEditorialParseUUID = UUID.fromString(idEditorial);
-            libroServicio.crearLibro(isbn, ejemplares, titulo, idAutorParseUUID, idEditorialParseUUID);
+            libroServicio.crearLibro(isbn, ejemplares, titulo, imagen, idAutorParseUUID, idEditorialParseUUID);
             modelo.put("exito", "Libro cargado exitosamente!");
         } catch (MiExcepcion e) {
             modelo.put("error", e.getMessage());
             Logger.getLogger(LibroControlador.class.getName()).log(Level.SEVERE, null, e);
+            List<Libro> libros = libroServicio.listarLibros();
             List<Autor> autores = autorServicio.listarAutores();
             List<Editorial> editoriales = editorialServicio.listarEditoriales();
+            modelo.addAttribute("libros", libros);
             modelo.addAttribute("autores", autores);
             modelo.addAttribute("editoriales", editoriales);
             return "libro_form.html";

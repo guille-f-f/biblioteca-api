@@ -41,8 +41,35 @@ public class EditorialServicio {
         }
     }
 
-    private void validar(String nombreEditorial) throws MiExcepcion {
-        if (nombreEditorial == null || nombreEditorial.isEmpty()) {
+    @Transactional(readOnly = true)
+    public Editorial obtenerEditorialPorId(String idEditorial) throws MiExcepcion {
+        validar(idEditorial);
+        UUID uuidEditorial = UUID.fromString(idEditorial);
+        Optional<Editorial> optionalEditorial = editorialRepositorio.findById(uuidEditorial);
+        if (optionalEditorial.isPresent()) {
+            return optionalEditorial.get();
+        } else {
+            throw new MiExcepcion("Editorial no localizada.");
+        }
+    }
+
+    @Transactional
+    public void modificarEditorial(String idEditorial, String nombre) throws MiExcepcion {
+        validar(idEditorial);
+        validar(nombre);
+        UUID uuidEditorial = UUID.fromString(idEditorial);
+        Optional<Editorial> optionalEditorial = editorialRepositorio.findById(uuidEditorial);
+        if (optionalEditorial.isPresent()) {
+            Editorial editorial = optionalEditorial.get();
+            editorial.setNombre(nombre);
+            editorialRepositorio.save(editorial);
+        } else {
+            throw new MiExcepcion("Editorial no localizada.");
+        }
+    }
+
+    private void validar(String parametro) throws MiExcepcion {
+        if (parametro == null || parametro.isEmpty()) {
             throw new MiExcepcion("El nombre de la editorial no puede ser nulo, y encontrarse vacío.");
         }
     }

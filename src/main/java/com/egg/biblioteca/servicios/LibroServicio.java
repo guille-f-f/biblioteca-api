@@ -31,9 +31,9 @@ public class LibroServicio {
     private EditorialRepositorio editorialRepositorio;
 
     @Transactional
-    public void crearLibro(Long isbn, Integer ejemplares, String titulo, UUID idAutor, UUID idEditorial) throws MiExcepcion {
+    public void crearLibro(Long isbn, Integer ejemplares, String titulo, String imagen, UUID idAutor, UUID idEditorial) throws MiExcepcion {
 
-        validar(isbn, ejemplares, titulo, idAutor, idEditorial);
+        validar(isbn, ejemplares, titulo, imagen, idAutor, idEditorial);
 
         Libro libro = new Libro();
 
@@ -41,12 +41,12 @@ public class LibroServicio {
         libro.setEjemplares(ejemplares);
         libro.setTitulo(titulo);
         libro.setAlta(new Date());
+        libro.setImagen(imagen);
         Optional<Autor> optionalAutor = autorRepositorio.findById(idAutor);
         if (optionalAutor.isPresent()) {
             Autor autor = optionalAutor.get();
             libro.setAutor(autor);
         }
-
         Optional<Editorial> optionalEditorial = editorialRepositorio.findById(idEditorial);
         if (optionalEditorial.isPresent()) {
             Editorial editorial = optionalEditorial.get();
@@ -62,23 +62,29 @@ public class LibroServicio {
     }
 
     @Transactional
-    public void modificarLibro(Long isbn, String titulo, Integer ejemplares, UUID idAutor, UUID idEditorial) throws MiExcepcion {
+    public void modificarLibro(String isbn, String titulo, Integer ejemplares, String imagen, String idAutor, String idEditorial) throws MiExcepcion {
 
-        validar(isbn, ejemplares, titulo, idAutor, idEditorial);
+        System.out.println("ingresamos al metodo libroServicio.modificarLibro()");
 
-        Optional<Libro> optionalLibro = libroRepositorio.findById(isbn);
+        Long isbnParse = Long.parseLong(isbn);
+        UUID uuidAutor = UUID.fromString(idAutor);
+        UUID uuidEditorial = UUID.fromString(idEditorial);
+
+        validar(isbnParse, ejemplares, titulo, imagen, uuidAutor, uuidEditorial);
+        Optional<Libro> optionalLibro = libroRepositorio.findById(isbnParse);
 
         if (optionalLibro.isPresent()) {
             Libro libro = optionalLibro.get();
             libro.setTitulo(titulo);
             libro.setEjemplares(ejemplares);
+            libro.setImagen(imagen);
 
             // Buscar autor y asignarlo si está presente
-            libro.setAutor(autorRepositorio.findById(idAutor)
+            libro.setAutor(autorRepositorio.findById(uuidAutor)
                     .orElseThrow(() -> new MiExcepcion("Autor inexistente.")));
 
             // Buscar editorial y asignarla si está presente
-            libro.setEditorial(editorialRepositorio.findById(idEditorial)
+            libro.setEditorial(editorialRepositorio.findById(uuidEditorial)
                     .orElseThrow(() -> new MiExcepcion("Editorial inexistente.")));
 
             libroRepositorio.save(libro);
@@ -87,7 +93,20 @@ public class LibroServicio {
         }
     }
 
-    private void validar(Long isbn, Integer ejemplares, String titulo, UUID idAutor, UUID idEditorial) throws MiExcepcion {
+    @Transactional(readOnly = true)
+    public Libro obtenerLibroPorId(String isbn) throws MiExcepcion {
+        Long idParse = Long.parseLong(isbn);
+        validar(idParse);
+        return libroRepositorio.getReferenceById(idParse);
+    }
+
+    private void validar(Long isbn) throws MiExcepcion {
+        if (isbn == null || isbn < 0) {
+            throw new MiExcepcion("El número de ISBN no puede ser nulo o negativo.");
+        }
+    }
+
+    private void validar(Long isbn, Integer ejemplares, String titulo, String imagen, UUID idAutor, UUID idEditorial) throws MiExcepcion {
         if (isbn == null || isbn < 0) {
             throw new MiExcepcion("El número de ISBN no puede ser nulo o negativo.");
         }
@@ -96,8 +115,8 @@ public class LibroServicio {
             throw new MiExcepcion("El número de ejemplares debe ser positivo.");
         }
 
-        if (titulo == null || titulo.isEmpty()) {
-            throw new MiExcepcion("El titulo del libro es nulo o se encuentra vacío.");
+        if (titulo == null || titulo.isEmpty() || imagen == null || imagen.isEmpty()) {
+            throw new MiExcepcion("El titulo o imagen del libro es nulo o se encuentra/n vacío/s.");
         }
 
         if (idAutor == null) {

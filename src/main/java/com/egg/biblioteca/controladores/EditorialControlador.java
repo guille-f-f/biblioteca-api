@@ -5,10 +5,7 @@ import com.egg.biblioteca.servicios.EditorialServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.logging.Logger;
 import java.util.logging.Level;
@@ -37,4 +34,30 @@ public class EditorialControlador {
         }
         return "/index.html";
     }
+
+    @GetMapping("/lista")
+    public String listar(ModelMap modelo) {
+        modelo.addAttribute("editoriales", editorialServicio.listarEditoriales());
+        return "editorial_list.html";
+    }
+
+    @GetMapping("/modificar/{id}")
+    public String modificar(@PathVariable String id, ModelMap modelo) throws MiExcepcion {
+        modelo.addAttribute("editorial", editorialServicio.obtenerEditorialPorId(id));
+        return "editorial_modificar.html";
+    }
+
+    @PostMapping("/modificar")
+    public String modificar(@RequestParam String id, @RequestParam String nombre, ModelMap modelo) throws MiExcepcion {
+        System.out.println("Ingresamos al controlador");
+        try {
+            editorialServicio.modificarEditorial(id, nombre);
+            modelo.put("exito", "Editorial modificada.");
+        } catch (MiExcepcion e) {
+            modelo.put("error", e.getMessage());
+            return "editorial_modificar.html";
+        }
+        return "redirect:/editorial/lista";
+    }
+
 }

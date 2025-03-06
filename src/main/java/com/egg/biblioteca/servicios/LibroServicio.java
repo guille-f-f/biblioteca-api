@@ -62,11 +62,16 @@ public class LibroServicio {
     }
 
     @Transactional
-    public void modificarLibro(Long isbn, String titulo, Integer ejemplares, String imagen, UUID idAutor, UUID idEditorial) throws MiExcepcion {
+    public void modificarLibro(String isbn, String titulo, Integer ejemplares, String imagen, String idAutor, String idEditorial) throws MiExcepcion {
 
-        validar(isbn, ejemplares, titulo, imagen, idAutor, idEditorial);
+        System.out.println("ingresamos al metodo libroServicio.modificarLibro()");
 
-        Optional<Libro> optionalLibro = libroRepositorio.findById(isbn);
+        Long isbnParse = Long.parseLong(isbn);
+        UUID uuidAutor = UUID.fromString(idAutor);
+        UUID uuidEditorial = UUID.fromString(idEditorial);
+
+        validar(isbnParse, ejemplares, titulo, imagen, uuidAutor, uuidEditorial);
+        Optional<Libro> optionalLibro = libroRepositorio.findById(isbnParse);
 
         if (optionalLibro.isPresent()) {
             Libro libro = optionalLibro.get();
@@ -75,16 +80,29 @@ public class LibroServicio {
             libro.setImagen(imagen);
 
             // Buscar autor y asignarlo si está presente
-            libro.setAutor(autorRepositorio.findById(idAutor)
+            libro.setAutor(autorRepositorio.findById(uuidAutor)
                     .orElseThrow(() -> new MiExcepcion("Autor inexistente.")));
 
             // Buscar editorial y asignarla si está presente
-            libro.setEditorial(editorialRepositorio.findById(idEditorial)
+            libro.setEditorial(editorialRepositorio.findById(uuidEditorial)
                     .orElseThrow(() -> new MiExcepcion("Editorial inexistente.")));
 
             libroRepositorio.save(libro);
         } else {
             throw new EntityNotFoundException("Libro con ISBN " + isbn + " no encontrado.");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Libro obtenerLibroPorId(String isbn) throws MiExcepcion {
+        Long idParse = Long.parseLong(isbn);
+        validar(idParse);
+        return libroRepositorio.getReferenceById(idParse);
+    }
+
+    private void validar(Long isbn) throws MiExcepcion {
+        if (isbn == null || isbn < 0) {
+            throw new MiExcepcion("El número de ISBN no puede ser nulo o negativo.");
         }
     }
 

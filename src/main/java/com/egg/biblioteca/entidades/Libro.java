@@ -2,12 +2,7 @@ package com.egg.biblioteca.entidades;
 
 import java.util.Date;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "libro")
@@ -16,6 +11,8 @@ public class Libro {
     private Long isbn;
     private String titulo;
     private Integer ejemplares;
+    @Column(length = 1500) // Aumenta el tamaño del VARCHAR a 1500 caracteres
+    private String imagen;
 
     @Temporal(TemporalType.DATE)
     private Date alta;
@@ -77,9 +74,17 @@ public class Libro {
         this.autor = autor;
     }
 
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
+
     @Override
     public String toString() {
         return "Libro [isbn=" + isbn + ", titulo=" + titulo + ", ejemplares=" + ejemplares + ", alta=" + alta
-                + ", autor=" + autor + ", editorial=" + editorial + "]";
+                + ", autor=" + autor + ", editorial=" + editorial + ", imagen= " + imagen + "]";
     }
 }

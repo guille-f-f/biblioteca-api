@@ -132,6 +132,22 @@
 
 </div>
 
+<section class="my-5 mx-3">
+    <div class="d-flex justify-content-around gap-1 p-2 g-2">
+        <div th:each="libro : ${libros}" class="card" style="width: 18rem;">
+            <img th:src="${libro.imagen}"
+                 class="card-img-top" alt="libro">
+            <div class="card-body">
+                <h5 class="card-title" th:text="${libro.titulo}">Card title</h5>
+                <h6>Autor: </h6>
+                <h6 class="card-subtitle mb-2 text-body-secondary" th:text="${libro.autor.nombre}">Autr: </h6>
+                <p>Editorial: </p>
+                <p class="card-text" th:text="${libro.editorial.nombre}"></p>
+            </div>
+        </div>
+    </div>
+</section>
+
 <footer class="text-muted py-5">
     <div class="containerFooter">
         <p class="mb-1">Album example is &copy; Bootstrap,<br>but please download and customize it for yourself!</p>

@@ -23,55 +23,64 @@
     </button>
     <div class="collapse navbar-collapse elementosNav" id="navbarNavDropdown">
         <ul class="navbar-nav ms-auto elementos">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-                   aria-expanded="false">
-                    Libros
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+<!--            <li class="nav-item dropdown">-->
+<!--                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"-->
+<!--                   aria-expanded="false">-->
+<!--                    Libros-->
+<!--                </a>-->
+<!--                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">-->
 
-                    <li><a class="dropdown-item" th:href="@{/libro/registrar}">Crear Libro</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
+<!--                    <li><a class="dropdown-item" th:href="@{/libro/registrar}">Crear Libro</a></li>-->
+<!--                    <li>-->
+<!--                        <hr class="dropdown-divider">-->
+<!--                    </li>-->
 
-                    <li><a class="dropdown-item" th:href="@{/libro/lista}">Listar Libros</a></li>
-                </ul>
+<!--                    <li><a class="dropdown-item" th:href="@{/libro/lista}">Listar Libros</a></li>-->
+<!--                </ul>-->
+<!--            </li>-->
+
+
+<!--            <li class="nav-item dropdown">-->
+<!--                <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-bs-toggle="dropdown"-->
+<!--                   aria-expanded="false">-->
+<!--                    Autores-->
+<!--                </a>-->
+<!--                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">-->
+
+<!--                    <li><a class="dropdown-item" th:href="@{/autor/registrar}">Crear Autor</a></li>-->
+<!--                    <li>-->
+<!--                        <hr class="dropdown-divider">-->
+<!--                    </li>-->
+
+<!--                    <li><a class="dropdown-item" th:href="@{/autor/lista}">Listar Autores</a></li>-->
+<!--                </ul>-->
+<!--            </li>-->
+
+
+<!--            <li class="nav-item dropdown">-->
+<!--                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"-->
+<!--                   aria-expanded="false">-->
+<!--                    Editoriales-->
+<!--                </a>-->
+<!--                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">-->
+
+<!--                    <li><a class="dropdown-item" th:href="@{/editorial/registrar}">Crear Editorial</a></li>-->
+<!--                    <li>-->
+<!--                        <hr class="dropdown-divider">-->
+<!--                    </li>-->
+
+<!--                    <li><a class="dropdown-item" th:href="@{/editorial/lista}">Listar Editoriales</a></li>-->
+<!--                </ul>-->
+<!--            </li>-->
+
+            <li class="nav-item">
+                <a th:href="@{/registro}" class="nav-link">Registrarse</a>
             </li>
 
-
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-                   aria-expanded="false">
-                    Autores
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-                    <li><a class="dropdown-item" th:href="@{/autor/registrar}">Crear Autor</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-
-                    <li><a class="dropdown-item" th:href="@{/autor/lista}">Listar Autores</a></li>
-                </ul>
+            <li class="nav-item">
+                <a th:href="@{/login}" class="nav-link">Iniciar Sesión</a>
             </li>
 
-
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-                   aria-expanded="false">
-                    Editoriales
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-                    <li><a class="dropdown-item" th:href="@{/editorial/registrar}">Crear Editorial</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-
-                    <li><a class="dropdown-item" th:href="@{/editorial/lista}">Listar Editoriales</a></li>
-                </ul>
-            </li>
         </ul>
     </div>
 </nav>
@@ -97,30 +106,10 @@
         </div>
         <div class="container contenedorLibros">
             <p class="tituloLibros">Encontrá todos los Libros Aquí!</p>
-
         </div>
-        <div class="bg-circle-1 bg-circle"></div>
-        <div class="bg-circle-2 bg-circle"></div>
-        <div class="bg-circle-3 bg-circle"></div>
-        <div class="bg-circle-4 bg-circle"></div>
+        <a class="btn btn-warning" th:href="@{/libro/lista}">Libros</a>
     </section>
 </header>
-
-<section class="my-5 mx-3" >
-    <div class="d-flex justify-content-around p-2 g-2">
-        <div th:each="libro : ${libros}" class="card" style="width: 18rem;">
-            <img th:src="${libro.imagen}"
-                 class="card-img-top" alt="libro">
-            <div class="card-body">
-                <h5 class="card-title" th:text="${libro.titulo}">Card title</h5>
-                <h6>Autor: </h6>
-                <h6 class="card-subtitle mb-2 text-body-secondary" th:text="${libro.autor.nombre}">Autr: </h6>
-                <p>Editorial: </p>
-                <p class="card-text" th:text="${libro.editorial.nombre}"></p>
-            </div>
-        </div>
-    </div>
-</section>
 
 <footer class="text-muted py-5">
     <div class="containerFooter">

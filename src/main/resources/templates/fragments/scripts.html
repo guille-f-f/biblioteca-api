@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head> <!-- solo para evitar errores si abrís el fragmento directamente -->
+<body>
+    <th:block th:fragment="scripts"> <!--    <th:block> porque no genera ningún tag adicional en el HTML renderizado. Es ideal para fragmentos de scripts, metas, etc.-->
+        <!-- JavaScript Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+                crossorigin="anonymous"></script>
+    </th:block>
+</body>
+</html>

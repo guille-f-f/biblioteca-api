@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<div th:fragment="error" th:if="${error}!=null" class="card text-white bg-danger mb-3 mensajeError">
+    <div class="card-body">
+        <h5 class="card-title">Error ðŸ‘Ž</h5>
+        <p class="card-text" th:text="${error}"></p>
+    </div>
+</div>
+</body>
+</html>

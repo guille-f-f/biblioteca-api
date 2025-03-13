@@ -2,47 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/head :: head('Biblioteca Egg')}"></head>
 <body>
-
-<nav class="navbar navbar-expand-lg navBar">
-    <div class="containerImg">
-        <a href="/" class="navbar-brand d-flex align-items-center">
-            <img class="logo" src="/img/Egg.png" alt="Img logo egg">
-        </a>
-    </div>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
-            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse elementosNav" id="navbarNavDropdown">
-        <ul class="navbar-nav ms-auto elementos">
-
-            <li class="nav-item">
-                <a th:href="@{/registro}" class="nav-link">Registrarse</a>
-            </li>
-
-            <li class="nav-item">
-                <a th:href="@{/login}" class="nav-link">Iniciar Sesión</a>
-            </li>
-
-        </ul>
-    </div>
-</nav>
-
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div th:replace="~{fragments/exito :: exito}"></div>
 <div th:replace="~{fragments/error :: error}"></div>
-
-<header class="header">
-    <section class="contenedorMain">
-        <div class="tituloBiblioteca">
-            <a class="navbar-brand" href="#">BIBLIOTECA EGG</a>
-        </div>
-        <div class="container contenedorLibros">
-            <p class="tituloLibros">Encontrá todos los Libros Aquí!</p>
-        </div>
-        <a class="btn btn-warning" th:href="@{/libro/lista}">Libros</a>
-    </section>
-</header>
-
+<header th:replace="~{fragments/header :: header}"></header>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <div th:replace="~{fragments/scripts :: scripts}"></div>
 </body>

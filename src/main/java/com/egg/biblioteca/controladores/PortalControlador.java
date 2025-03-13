@@ -1,10 +1,14 @@
 package com.egg.biblioteca.controladores;
 
+import com.egg.biblioteca.entidades.Usuario;
 import com.egg.biblioteca.excepciones.MiExcepcion;
 import com.egg.biblioteca.servicios.LibroServicio;
 import com.egg.biblioteca.servicios.UsuarioServicio;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,7 +50,14 @@ public class PortalControlador {
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/inicio")
-    public String inicio() {
+    public String inicio(HttpSession session) {
+        System.out.println("Ingresamos al metodo inicio.");
+        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuariosession");
+        if (usuarioLogueado.getRol().toString().equals("ADMIN")) {
+            System.out.println("Ingresamos al panel administrador");
+            return "redirect:/admin/dashboard";
+        }
+        System.out.println("Estamos en el metodo de inicio");
         return "inicio.html";
     }
 
@@ -55,11 +66,11 @@ public class PortalControlador {
         try {
             usuarioServicio.registrar(nombre, email, password, password2);
             modelo.put("exito", "Usuario registrado correctamente.");
+            return "redirect:/inicio";
         } catch (MiExcepcion e) {
             modelo.put("error", e.getMessage());
             return "registro.html";
         }
-        return "index.html";
     }
 
 }

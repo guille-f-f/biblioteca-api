@@ -6,8 +6,10 @@ import com.egg.biblioteca.excepciones.MiExcepcion;
 import com.egg.biblioteca.repositorios.UsuarioRepositorio;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -44,6 +46,7 @@ public class UsuarioServicio implements UserDetailsService {
         usuario.setPassword(passwordEncoder.encode(password)); // Cifrado de contraseña
         usuario.setRol(Rol.USER); // Asignación del ENUM Rol
         usuarioRepositorio.save(usuario);
+
         return "Usuario cargado exitosamente.";
     }
 

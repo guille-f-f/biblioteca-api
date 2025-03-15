@@ -22,8 +22,14 @@
             <td th:text="${usuario.email}"></td>
             <td th:text="${usuario.rol}"></td>
             <td th:text="${usuario.password}"></td>
-            <td>
-                <a th:href="@{/admin/usuario/modificar-rol/__${usuario.id}__}"><i class="fas fa-feather-alt"> </i> Modificar ROL</a>
+            <td th:switch="${usuario.rol.name()}">
+                <a th:href="@{/admin/usuario/modificar-rol/__${usuario.id}__}">
+                    <button th:case="'ADMIN'" type="button" class="btn btn-primary">Cambiar rol a "USER"</button>
+                    <button th:case="'USER'" type="button" class="btn btn-light">Cambiar rol a "ADMIN"</button>
+                    <button th:case="*"
+                            type="button" class="btn btn-secondary">Rol desconocido
+                    </button>
+                </a>
             </td>
         </tr>
         </tbody>

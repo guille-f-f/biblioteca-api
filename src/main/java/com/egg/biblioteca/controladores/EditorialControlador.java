@@ -32,7 +32,7 @@ public class EditorialControlador {
             Logger.getLogger(EditorialControlador.class.getName()).log(Level.SEVERE, null, e);
             return "editorial_form.html";
         }
-        return "/index.html";
+        return "index.html";
     }
 
     @GetMapping("/lista")

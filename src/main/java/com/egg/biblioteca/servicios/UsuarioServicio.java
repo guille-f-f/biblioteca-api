@@ -1,5 +1,6 @@
 package com.egg.biblioteca.servicios;
 
+import com.egg.biblioteca.entidades.Editorial;
 import com.egg.biblioteca.entidades.Usuario;
 import com.egg.biblioteca.enumeraciones.Rol;
 import com.egg.biblioteca.excepciones.MiExcepcion;
@@ -20,9 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UsuarioServicio implements UserDetailsService {
@@ -32,6 +35,53 @@ public class UsuarioServicio implements UserDetailsService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Transactional(readOnly = true)
+    public List<Usuario> listarUsuarios() {
+        return usuarioRepositorio.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Usuario buscarUsuarioPorId(String id) throws MiExcepcion {
+        validar(id);
+        UUID uuid = UUID.fromString(id);
+        Optional<Usuario> optionalUsuario = usuarioRepositorio.findById(uuid);
+        if (optionalUsuario.isPresent()) {
+            return optionalUsuario.get();
+        } else {
+            throw new MiExcepcion("Usuario no localizado.");
+        }
+    }
+
+    @Transactional
+    public void modificarUsuario(String idUsuario, String nombre, String email, String password, Rol rol) throws MiExcepcion {
+        validar(idUsuario);
+        validar(nombre, email, password, rol);
+        UUID uuidUsuario = UUID.fromString(idUsuario);
+        Optional<Usuario> optionalUsuario = usuarioRepositorio.findById(uuidUsuario);
+        if (optionalUsuario.isPresent()) {
+            Usuario usuario = optionalUsuario.get();
+            usuario.setNombre(nombre);
+            usuarioRepositorio.save(usuario);
+        } else {
+            throw new MiExcepcion("Usuario no localizado.");
+        }
+    }
+
+    @Transactional
+    public void modificarRolDeUsuario(String idUsuario) throws MiExcepcion {
+        Usuario usuario = buscarUsuarioPorId(idUsuario);
+        System.out.println(usuario);
+        System.out.println("ROL: " + usuario.getRol());
+        if (usuario.getRol().toString().equals("USER")) {
+            usuario.setRol(Rol.ADMIN);
+        } else if (usuario.getRol().toString().equals("ADMIN")) {
+            usuario.setRol(Rol.USER);
+        } else {
+            throw new MiExcepcion("Error, el usuario no tiene un rol asignado.");
+        }
+        usuarioRepositorio.save(usuario);
+    }
 
     @Transactional
     public String registrar(String nombre, String email, String password, String password2) throws MiExcepcion {
@@ -90,4 +140,24 @@ public class UsuarioServicio implements UserDetailsService {
         }
     }
 
+    private void validar(String nombre, String email, String password, Rol rol) throws MiExcepcion {
+        if (nombre.isEmpty() || nombre == null) {
+            throw new MiExcepcion("el nombre no puede ser nulo o estar vacío");
+        }
+        if (email.isEmpty() || email == null) {
+            throw new MiExcepcion("el email no puede ser nulo o estar vacío");
+        }
+        if (password.isEmpty() || password == null || password.length() <= 5) {
+            throw new MiExcepcion("La contraseña no puede estar vacía, y debe tener más de 5 dígitos");
+        }
+        if (rol == null) {
+            throw new MiExcepcion("El rol no pude ser nulo");
+        }
+    }
+
+    private void validar(String idUsuario) throws MiExcepcion {
+        if (idUsuario == null) {
+            throw new MiExcepcion("El id del usuario no puede ser nulo.");
+        }
+    }
 }

@@ -1,23 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/head :: head('Biblioteca Egg - Lista de Editoriales')}"></head>
+<head th:replace="~{fragments/head :: head('Biblioteca Egg - Lista de Usuarios')}"></head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div class="container m-auto">
     <table class="table table-dark">
         <thead>
         <tr>
-            <th scope="col">Id de Editrial</th>
-            <th scope="col">Nombre de Editorial</th>
+            <th scope="col">Id del Usuario</th>
+            <th scope="col">Nombre del Usuario</th>
+            <th scope="col">Email del Usuario</th>
+            <th scope="col">ROL del Usuario</th>
+            <th scope="col">Password del Usuario</th>
             <th scope="col">Acciones</th>
         </tr>
         </thead>
-        <tbody th:each="editorial : ${editoriales}">
+        <tbody th:each="usuario : ${usuarios}">
         <tr>
-            <th scope="row" th:text="${editorial.id}"></th>
-            <td th:text="${editorial.nombre}"></td>
+            <th scope="row" th:text="${usuario.id}"></th>
+            <td th:text="${usuario.nombre}"></td>
+            <td th:text="${usuario.email}"></td>
+            <td th:text="${usuario.rol}"></td>
+            <td th:text="${usuario.password}"></td>
             <td>
-                <a th:href="@{/editorial/modificar/__${editorial.id}__}"><i class="fas fa-feather-alt"> </i> Modificar </a>
+                <a th:href="@{/admin/usuario/modificar-rol/__${usuario.id}__}"><i class="fas fa-feather-alt"> </i> Modificar ROL</a>
             </td>
         </tr>
         </tbody>
@@ -29,4 +35,5 @@
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <div th:replace="~{fragments/scripts :: scripts}"></div>
 <div th:replace="~{fragments/scripts :: scripts_popper}"></div>
+</body>
 </html>

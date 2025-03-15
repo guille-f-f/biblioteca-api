@@ -34,14 +34,7 @@
             <p class="card-text" th:text="${error}"></p>
         </div>
     </div>
-    <section class="py-5 text-center container">
-        <div class="row py-lg-5">
-            <div class="col-lg-6 col-md-8 mx-auto">
-                <a th:href="@{/}" class="btn btn-primary my-2">Volver</a>
-                </p>
-            </div>
-        </div>
-    </section>
+    <section th:replace="~{fragments/return :: return}"></section>
 </div>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <div th:replace="~{fragments/scripts :: scripts}"></div>

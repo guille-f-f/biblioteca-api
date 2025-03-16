@@ -25,6 +25,10 @@ public class Usuario {
     @Enumerated(EnumType.STRING) // Almacena el nombre del ENUM como texto en la BD
     private Rol rol;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "imagen_id")
+    private Imagen imagen;
+
     @PrePersist // Se usa para asignar un UUID antes de que la entidad sea insertada en la base de datos.
     public void prePersist() {
         if (id == null) {

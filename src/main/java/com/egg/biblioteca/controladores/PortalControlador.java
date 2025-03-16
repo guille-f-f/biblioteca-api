@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/")
@@ -51,20 +52,21 @@ public class PortalControlador {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/inicio")
     public String inicio(HttpSession session) {
-        System.out.println("Ingresamos al metodo inicio.");
         Usuario usuarioLogueado = (Usuario) session.getAttribute("usuariosession");
         if (usuarioLogueado.getRol().toString().equals("ADMIN")) {
             System.out.println("Ingresamos al panel administrador");
             return "redirect:/admin/dashboard";
         }
-        System.out.println("Estamos en el metodo de inicio");
         return "inicio.html";
     }
 
     @PostMapping("/registro")
-    public String registro(@RequestParam String nombre, @RequestParam String email, @RequestParam String password, @RequestParam String password2, ModelMap modelo) {
+    public String registro(@RequestParam String nombre, @RequestParam String email, @RequestParam String password, @RequestParam String password2, @RequestParam(required = false) MultipartFile file, ModelMap modelo) {
         try {
-            usuarioServicio.registrar(nombre, email, password, password2);
+            System.out.println("Registro de usuario");
+            usuarioServicio.registrar(nombre, email, password, password2, file);
+            System.out.println("Registro de usuario exitoso");
+
             modelo.put("exito", "Usuario registrado correctamente.");
             return "redirect:/inicio";
         } catch (MiExcepcion e) {

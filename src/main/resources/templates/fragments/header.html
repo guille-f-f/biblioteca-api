@@ -10,6 +10,13 @@
         <div sec:authorize="isAuthenticated()" class="container contenedorLibros">
             <p class="tituloLibros" th:if="${session.usuariosession != null}"
                th:text=" 'Hola de vuelta '+ ${session.usuariosession.nombre}"></p>
+
+            <div class="container">
+                <a th:if="${session.usuariosession.imagen != null}" class="d-flex align-items-center">
+                    <img class="logo" th:src="@{/imagen/perfil/__${session.usuariosession.id}__}">
+                </a>
+            </div>
+
             <p class="tituloLibros">Encontrá todos los Libros Aquí!</p>
             <a sec:authorize="isAuthenticated()" class="btn btn-warning btn-xl mt-2 boton"
                th:href="@{/libro/lista}">Libros</a>

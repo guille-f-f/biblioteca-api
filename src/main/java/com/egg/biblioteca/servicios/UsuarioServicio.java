@@ -1,6 +1,7 @@
 package com.egg.biblioteca.servicios;
 
 import com.egg.biblioteca.entidades.Editorial;
+import com.egg.biblioteca.entidades.Imagen;
 import com.egg.biblioteca.entidades.Usuario;
 import com.egg.biblioteca.enumeraciones.Rol;
 import com.egg.biblioteca.excepciones.MiExcepcion;
@@ -20,8 +21,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.text.html.Option;
+import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,57 +38,13 @@ public class UsuarioServicio implements UserDetailsService {
     private UsuarioRepositorio usuarioRepositorio;
 
     @Autowired
+    private ImagenServicio imagenServicio;
+
+    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
-    @Transactional(readOnly = true)
-    public List<Usuario> listarUsuarios() {
-        return usuarioRepositorio.findAll();
-    }
-
-    @Transactional(readOnly = true)
-    public Usuario buscarUsuarioPorId(String id) throws MiExcepcion {
-        validar(id);
-        UUID uuid = UUID.fromString(id);
-        Optional<Usuario> optionalUsuario = usuarioRepositorio.findById(uuid);
-        if (optionalUsuario.isPresent()) {
-            return optionalUsuario.get();
-        } else {
-            throw new MiExcepcion("Usuario no localizado.");
-        }
-    }
-
     @Transactional
-    public void modificarUsuario(String idUsuario, String nombre, String email, String password, Rol rol) throws MiExcepcion {
-        validar(idUsuario);
-        validar(nombre, email, password, rol);
-        UUID uuidUsuario = UUID.fromString(idUsuario);
-        Optional<Usuario> optionalUsuario = usuarioRepositorio.findById(uuidUsuario);
-        if (optionalUsuario.isPresent()) {
-            Usuario usuario = optionalUsuario.get();
-            usuario.setNombre(nombre);
-            usuarioRepositorio.save(usuario);
-        } else {
-            throw new MiExcepcion("Usuario no localizado.");
-        }
-    }
-
-    @Transactional
-    public void modificarRolDeUsuario(String idUsuario) throws MiExcepcion {
-        Usuario usuario = buscarUsuarioPorId(idUsuario);
-        System.out.println(usuario);
-        System.out.println("ROL: " + usuario.getRol());
-        if (usuario.getRol().toString().equals("USER")) {
-            usuario.setRol(Rol.ADMIN);
-        } else if (usuario.getRol().toString().equals("ADMIN")) {
-            usuario.setRol(Rol.USER);
-        } else {
-            throw new MiExcepcion("Error, el usuario no tiene un rol asignado.");
-        }
-        usuarioRepositorio.save(usuario);
-    }
-
-    @Transactional
-    public String registrar(String nombre, String email, String password, String password2) throws MiExcepcion {
+    public String registrar(String nombre, String email, String password, String password2, MultipartFile file) throws MiExcepcion {
         validar(nombre, email, password, password2);
 
         if (usuarioRepositorio.buscarPorEmail(email).isPresent()) {
@@ -95,6 +55,10 @@ public class UsuarioServicio implements UserDetailsService {
         usuario.setEmail(email);
         usuario.setPassword(passwordEncoder.encode(password)); // Cifrado de contraseña
         usuario.setRol(Rol.USER); // Asignación del ENUM Rol
+
+        Imagen imagen = imagenServicio.guardar(file);
+        usuario.setImagen(imagen);
+
         usuarioRepositorio.save(usuario);
 
         return "Usuario cargado exitosamente.";
@@ -123,6 +87,82 @@ public class UsuarioServicio implements UserDetailsService {
 
         // Retornar un objeto User de Spring Security con email, contraseña y permisos
         return new User(usuario.getEmail(), usuario.getPassword(), permisos);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Usuario> listarUsuarios() {
+        return usuarioRepositorio.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Usuario buscarUsuarioPorId(String id) throws MiExcepcion {
+        validar(id);
+        UUID uuid = UUID.fromString(id);
+        Optional<Usuario> optionalUsuario = usuarioRepositorio.findById(uuid);
+        if (optionalUsuario.isPresent()) {
+            return optionalUsuario.get();
+        } else {
+            throw new MiExcepcion("Usuario no localizado.");
+        }
+    }
+
+    @Transactional
+    public void modificarUsuario(String idUsuario, String nombre, String email, String password, Rol rol, MultipartFile file) throws MiExcepcion, IOException {
+        validar(idUsuario);
+        validar(nombre, email, password, rol);
+
+        UUID uuidUsuario = UUID.fromString(idUsuario);
+        Optional<Usuario> optionalUsuario = usuarioRepositorio.findById(uuidUsuario);
+        if (optionalUsuario.isPresent()) {
+            Usuario usuario = optionalUsuario.get();
+            usuario.setNombre(nombre);
+            usuario.setEmail(email);
+
+            if (file != null || !file.isEmpty()) {
+                if (usuario.getImagen() != null) {
+                    imagenServicio.modificar(usuario.getImagen().getId(), file);
+                } else {
+                    Imagen imagen = imagenServicio.guardar(file);
+                    usuario.setImagen(imagen);
+                }
+            }
+            usuarioRepositorio.save(usuario);
+        } else {
+            throw new MiExcepcion("Usuario no localizado.");
+        }
+
+    }
+
+    @Transactional
+    public void modificarRolDeUsuario(String idUsuario) throws MiExcepcion, IOException {
+        Usuario usuario = buscarUsuarioPorId(idUsuario);
+        System.out.println(usuario);
+        System.out.println("ROL: " + usuario.getRol());
+        if (usuario.getRol().toString().equals("USER")) {
+            usuario.setRol(Rol.ADMIN);
+        } else if (usuario.getRol().toString().equals("ADMIN")) {
+            usuario.setRol(Rol.USER);
+        } else {
+            throw new MiExcepcion("Error, el usuario no tiene un rol asignado.");
+        }
+        usuarioRepositorio.save(usuario);
+    }
+
+    @Transactional
+    public void cargarFoto(Usuario usuario, MultipartFile file) throws MiExcepcion, IOException {
+        if (file == null || file.isEmpty()) {
+            throw new MiExcepcion("No se ha proporcionado una imagen válida.");
+        }
+
+        Imagen nuevaImagen;
+        if (usuario.getImagen() != null && usuario.getImagen().getId() != null) {
+            nuevaImagen = imagenServicio.modificar(usuario.getImagen().getId(), file);
+        } else {
+            nuevaImagen = imagenServicio.guardar(file);
+        }
+
+        usuario.setImagen(nuevaImagen);
+        usuarioRepositorio.save(usuario);
     }
 
     private void validar(String nombre, String email, String password, String password2) throws MiExcepcion {

@@ -1,6 +1,5 @@
 package com.egg.biblioteca.controladores;
 
-import com.egg.biblioteca.entidades.Imagen;
 import com.egg.biblioteca.entidades.Usuario;
 import com.egg.biblioteca.excepciones.MiExcepcion;
 import com.egg.biblioteca.servicios.ImagenServicio;

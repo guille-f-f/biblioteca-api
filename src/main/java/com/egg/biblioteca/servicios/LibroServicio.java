@@ -30,7 +30,8 @@ public class LibroServicio {
     private EditorialRepositorio editorialRepositorio;
 
     @Transactional
-    public void crearLibro(Long isbn, Integer ejemplares, String titulo, String imagen, UUID idAutor, UUID idEditorial) throws MiExcepcion {
+    public void crearLibro(Long isbn, Integer ejemplares, String titulo, String imagen, UUID idAutor, UUID idEditorial)
+            throws MiExcepcion {
 
         validar(isbn, ejemplares, titulo, imagen, idAutor, idEditorial);
 
@@ -61,7 +62,8 @@ public class LibroServicio {
     }
 
     @Transactional
-    public void modificarLibro(String isbn, String titulo, Integer ejemplares, String imagen, String idAutor, String idEditorial) throws MiExcepcion {
+    public void modificarLibro(String isbn, String titulo, Integer ejemplares, String imagen, String idAutor,
+            String idEditorial) throws MiExcepcion {
 
         System.out.println("ingresamos al metodo libroServicio.modificarLibro()");
 
@@ -105,7 +107,8 @@ public class LibroServicio {
         }
     }
 
-    private void validar(Long isbn, Integer ejemplares, String titulo, String imagen, UUID idAutor, UUID idEditorial) throws MiExcepcion {
+    private void validar(Long isbn, Integer ejemplares, String titulo, String imagen, UUID idAutor, UUID idEditorial)
+            throws MiExcepcion {
         if (isbn == null || isbn < 0) {
             throw new MiExcepcion("El número de ISBN no puede ser nulo o negativo.");
         }
@@ -128,4 +131,3 @@ public class LibroServicio {
     }
 
 }
-
